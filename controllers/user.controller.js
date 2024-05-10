@@ -82,11 +82,11 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
 	try {
-		const id = +req.params.id;
+		const { id } = req.params
 
 		const user = await prisma.user.findUnique({
 			where: {
-				id: id,
+				id: +id,
 			},
 		});
 
@@ -106,7 +106,8 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
 	try {
-		const id = +req.params.id;
+		const { id } = req.params
+
         const { password } = req.body
         //the password if updated must be rehased
         const salt = await bcrypt.genSalt()
@@ -115,7 +116,7 @@ const updateUser = async (req, res) => {
 
 		const updatedUser = await prisma.user.update({
 			where: {
-				id: id,
+				id: +id,
 			},
 			data: {
 				...req.body,
@@ -138,10 +139,10 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
 	try {
-		const id = +req.params.id;
+		const { id } = req.params
 		const userDeleted = await prisma.user.delete({
 			where: {
-				id: id,
+				id: +id,
 			},
 		});
 
