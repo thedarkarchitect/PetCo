@@ -13,39 +13,108 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id Int @id@default(autoincrement())
+model User {
+  id        Int        @id @default(autoincrement())
   firstName String
-  lastName String
-  username String @unique
-  email String @unique
-  password String
-  role UserRole? @default(USER)
-  comment Comment[] //one to many
+  lastName  String
+  username  String     @unique
+  email     String     @unique
+  password  String
+  role      UserRole?  @default(USER)
+  comment   Comment[] //one to many
+  Cart      Cart[]
+  Order     Order[]
+  WishList  WishList[]
+  Address   Address[]
 }
 
 model Post {
-  id Int @id@default(autoincrement())
-  imageUrl String? //
-  title String //
-  content String //
-  comment Comment[] //one to many
-  createdAt DateTime @default(now()) @db.Date()
+  id        Int       @id @default(autoincrement())
+  imageUrl  String? //
+  title     String //
+  content   String //
+  comment   Comment[] //one to many
+  createdAt DateTime  @default(now()) @db.Date()
 }
 
 model Comment {
-  id Int @id@default(autoincrement())
-  content String
-  postId Int
-   //foreign key reference post
-  post Post @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade) //many to one
-  authorId Int?//foreign key reference to user that added the comment
-  author User? @relation(fields: [authorId], references: [id])
-  createdAt DateTime  @default(now()) @db.Date()
+  id        Int      @id @default(autoincrement())
+  content   String
+  postId    Int
+  //foreign key reference post
+  post      Post     @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade) //many to one
+  authorId  Int? //foreign key reference to user that added the comment
+  author    User?    @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now()) @db.Date()
+}
+
+model Product {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  category    String
+  price       Float
+  stock       Int
+  imageUrl    String?
+  Cart        Cart[] //many to many relationship a product will be in many carts
+  Order       Order[]
+  WishList    WishList[]
+  createdAt   DateTime   @default(now())
+}
+
+model Cart {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  products  Product  @relation(fields: [productId], references: [id])
+  productId Int
+  createAt  DateTime @default(now())
+
+  @@id([userId, productId])
+}
+
+model Order {
+  id         Int       @id @default(autoincrement())
+  totalPrice Float
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+  product    Product[] //many to many
+  orderDate  DateTime  @default(now())
+  address    Address   @relation(fields: [addressId], references: [id])
+  addressId  Int
+}
+
+model WishList {
+  id       Int       @id @default(autoincrement())
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int
+  products Product[] //many to many relationship with products
+}
+
+model Address {
+  id       Int     @id @default(autoincrement())
+  user     User    @relation(fields: [userId], references: [id])
+  userId   Int
+  district String
+  city     String
+  street   String
+  Order    Order[]
+}
+
+enum Categories {
+  PET_FOOD
+  PET_SUPPLIES
+  PET_FURNITURE
+  TOYS
+  GROOMING_PRODUCTS
+  HEALTH_AND_WELLNESS
+  APPAREL
+  TRAINING_AIDS
+  HOUSING
+  BOOKS_AND_EDUCATIONAL_MATERIALS
+  GIFTS_AND_SPECIALTY_ITEMS
 }
 
 enum UserRole {
   ADMIN
   USER
 }
-

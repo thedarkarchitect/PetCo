@@ -4,6 +4,7 @@ import cors from "cors";
 import userRouter from "./routes/user.routes.js";
 import postRouter from "./routes/post.routes.js";
 import commentRouter from "./routes/comment.routes.js";
+import productRouter from "./routes/product.routes.js";
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.use(
 app.use("/api/auth", userRouter);
 app.use("/api/posts", postRouter);
 app.use("/api/comments", commentRouter);
+app.use("/api/products", productRouter);
 
 export default app;
