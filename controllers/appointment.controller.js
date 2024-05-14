@@ -6,10 +6,11 @@ const prisma = new PrismaClient();
 const createAppointment = async (req, res) => {
 	try {
         const { petId, ownerId } = req.body
+		console.log(req.body)
 		const appointment = await prisma.appointment.create({
 			data: {
-                pet: { connect: { id: +petId }},
-                owner: { connect: { id: +ownerId}},
+				petId: +petId,
+				ownerId: +ownerId,
 				...req.body,
 			},
 		});
@@ -25,13 +26,27 @@ const createAppointment = async (req, res) => {
 };
 
 //get all appointment for a user
-const getAppointments = async (req, res) => {
+const getUserAppointments = async (req, res) => {
 	try {
         const { ownerId } = req.body.params;
 		const allappointments = await prisma.appointment.findMany({
 			where: {
                 ownerId: +ownerId
             },
+            include: { pet: true }
+		});
+		res.status(StatusCodes.OK).json({ message: "All appointments", appointments: allappointments });
+	} catch (error) {
+		res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "Can't get Users", error });
+	}
+};
+
+//get all appointment for a user
+const getAppointments = async (req, res) => {
+	try {
+		const allappointments = await prisma.appointment.findMany({
             include: { pet: true }
 		});
 		res.status(StatusCodes.OK).json({ message: "All appointments", appointments: allappointments });
@@ -73,23 +88,19 @@ const getAppointmentById = async (req, res) => {
 const updateAppointment = async (req, res) => {
 	try {
 		const { id } = req.params
-        const { petId, ownerId } = req.body;
 		const appointmentUpdate = await prisma.appointment.update({
 			where: {
 				id: +id,
 			},
 			data: {
-                pet: { connect: { id: +petId }},
-                owner: { connect: { id: +ownerId }},
 				...req.body,
 			},
 		});
 
-		if (appointmentUpdate) {
 			res
 				.status(StatusCodes.OK)
 				.json({ message: "appointment updated Successfully", appointment: appointmentUpdate });
-		}
+		
 	} catch (error) {
 		await prisma.$disconnect();
 		res
@@ -117,4 +128,4 @@ const deleteAppointment = async (req, res) => {
 	}
 };
 
-export { createAppointment, getAppointments, updateAppointment, getAppointmentById, deleteAppointment };
+export { createAppointment, getAppointments, updateAppointment, getAppointmentById, getUserAppointments, deleteAppointment };

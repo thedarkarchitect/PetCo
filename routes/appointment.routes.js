@@ -4,6 +4,7 @@ import { createAppointment, deleteAppointment, getAppointmentById, getAppointmen
 const appointmentRouter = new Router()
 
 appointmentRouter.get("/:ownerId", getAppointments);
+appointmentRouter.get("/", getAppointments);
 appointmentRouter.get("/:id", getAppointmentById);
 
 appointmentRouter.post("/createAppointment", createAppointment);

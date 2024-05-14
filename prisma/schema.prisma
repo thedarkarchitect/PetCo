@@ -111,7 +111,7 @@ model Appointment {
   ownerId     Int // Reference to the owner (User)
   owner       User       @relation(fields: [ownerId], references: [id])
   service     PetService
-  appointment DateTime
+  appointmentDate String
   notes       String?
 }
 
