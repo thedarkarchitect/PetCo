@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
-import cloudinary from "../utils/cloudinaryConfig";
+import cloudinary from "../utils/cloudinaryConfig.js";
 
 
 const prisma = new PrismaClient();
