@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
+import cloudinary from "../utils/cloudinaryConfig";
+
 
 const prisma = new PrismaClient();
 
@@ -19,9 +21,14 @@ const getAllproducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
 	try {
+		const { imageUrl } = req.body;
+				
+		const result = await cloudinary.uploader.upload(imageUrl, { upload_preset: "ml_default"});
+
 		const product = await prisma.product.create({
 			data: {
 				...req.body,
+				imageUrl: result.secure_url
 			},
 		});
 		

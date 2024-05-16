@@ -13,8 +13,10 @@ import appointmentRouter from "./routes/appointment.routes.js";
 
 const app = express();
 
+
+
 //middleware
-app.use(express.json());
+app.use(express.json({limit: "25mb"}));
 app.use(morgan("dev"));
 app.use(
 	cors({
@@ -23,6 +25,7 @@ app.use(
 		credentials: true,
 	})
 );
+app.use(express.urlencoded({limit: "25mb", extended: true}))
 
 app.use("/api/auth", userRouter); // done secured
 app.use("/api/posts", postRouter); // done

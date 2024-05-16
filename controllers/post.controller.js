@@ -1,13 +1,23 @@
 import { PrismaClient } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
+import cloudinary from "../utils/cloudinaryConfig.js";
+
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
 
 const prisma = new PrismaClient();
 
 const createPost = async (req, res) => {
 	try {
+		const { title, content, imageUrl } = req.body;
+		
+		const result = await cloudinary.uploader.upload(imageUrl, { upload_preset: "ml_default"});
+
 		const post = await prisma.post.create({
 			data: {
-				...req.body,
+				title,
+				content,
+				imageUrl: result.secure_url,
 			},
 		});
 
@@ -25,8 +35,8 @@ const getPosts = async (req, res) => {
 	try {
 		const allPosts = await prisma.post.findMany({
 			include: {
-				comment: true
-			}
+				comment: true,
+			},
 		});
 		res.status(StatusCodes.OK).json({ message: "All Posts", posts: allPosts });
 	} catch (error) {
@@ -38,15 +48,15 @@ const getPosts = async (req, res) => {
 
 const getPostById = async (req, res) => {
 	try {
-		const { id } = req.params
+		const { id } = req.params;
 
 		const post = await prisma.post.findUnique({
 			where: {
 				id: +id,
 			},
 			include: {
-				comment: true
-			}
+				comment: true,
+			},
 		});
 
 		if (post) {
@@ -65,7 +75,7 @@ const getPostById = async (req, res) => {
 
 const updatePost = async (req, res) => {
 	try {
-		const { id } = req.params
+		const { id } = req.params;
 
 		const postUpdate = await prisma.post.update({
 			where: {
@@ -91,15 +101,15 @@ const updatePost = async (req, res) => {
 
 const deletePost = async (req, res) => {
 	try {
-		const { id } = req.params
+		const { id } = req.params;
 
 		const postToDelete = await prisma.post.delete({
 			where: {
 				id: parseInt(id),
 			},
 			include: {
-				comment: true
-			}
+				comment: true,
+			},
 		});
 
 		res
