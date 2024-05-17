@@ -10,7 +10,7 @@ const getAllproducts = async (req, res) => {
 		const Products = await prisma.product.findMany();
 		res
 			.status(StatusCodes.OK)
-			.json({ message: "All Products", product: Products });
+			.json({ message: "All Products", count: Products.length, product: Products });
 	} catch (error) {
         await prisma.$disconnect()
 		res
@@ -21,15 +21,18 @@ const getAllproducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
 	try {
-		const { imageUrl } = req.body;
+		const { name, description, category, price, quantity, imageUrl } = req.body;
 				
 		const result = await cloudinary.uploader.upload(imageUrl, { upload_preset: "ml_default"});
-
 		const product = await prisma.product.create({
 			data: {
-				...req.body,
+				name,
+				description,
+				price: +price,
+				category,
+				quantity: +quantity,
 				imageUrl: result.secure_url
-			},
+			}
 		});
 		
 		res
@@ -70,12 +73,14 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-
+		const { price, quantity} = req.body;
         const updatedProduct = await prisma.product.update({
             where: {
                 id: +id
             },
             data: {
+				price: +price,
+				quantity: +quantity,
                 ...req.body
             }
         })
