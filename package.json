@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "jest",
 		"start": "nodemon index.js"
 	},
 	"author": "kevin",
@@ -18,13 +18,16 @@
 		"dotenv": "^16.4.5",
 		"express": "^4.19.2",
 		"http-status-codes": "^2.3.0",
+		"jest": "^29.7.0",
 		"joi": "^17.13.1",
 		"jsonwebtoken": "^9.0.2",
 		"morgan": "^1.10.0",
 		"multer": "^1.4.5-lts.1",
-		"nodemon": "^3.1.0"
+		"nodemon": "^3.1.0",
+		"supertest": "^7.0.0"
 	},
 	"devDependencies": {
+		"@babel/preset-env": "^7.24.5",
 		"prisma": "^5.13.0"
 	}
 }

@@ -10,7 +10,7 @@ const getAllproducts = async (req, res) => {
 		const Products = await prisma.product.findMany();
 		res
 			.status(StatusCodes.OK)
-			.json({ message: "All Products", count: Products.length, product: Products });
+			.json({ message: "All Products", count: Products.length, products: Products });
 	} catch (error) {
         await prisma.$disconnect()
 		res

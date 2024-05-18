@@ -46,6 +46,10 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
 	try {
 		const { email, password } = req.body;
+
+		if(!email || !password) {
+			return res.status(StatusCodes.NOT_FOUND).json({message: "Provide email and password"})
+		}
         
 		const user = await prisma.user.findUnique({
 				where: {
@@ -145,6 +149,10 @@ const deleteUser = async (req, res) => {
 				id: +id,
 			},
 		});
+
+		if(userDeleted){
+			res.status(StatusCodes.NOT_FOUND)
+		}
 
 		res
 			.status(StatusCodes.OK)
