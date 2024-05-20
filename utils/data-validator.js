@@ -9,6 +9,17 @@ const userSchema = Joi.object({
 	role: Joi.string()
 });
 
+const loginSchema = Joi.object({
+	email: Joi.string().email().required(),
+	password: Joi.string().min(4).max(8).required(),
+})
+
+// const postSchema = Joi.object({
+// 	imageUrl: Joi.string().allow(null),
+// 	title: Joi.string().required(),
+// 	content: Joi.string().required()
+// })
+
 const validate = (schema) => {
 	return (req, res, next) => {
 		const result = schema.validate(req.body);

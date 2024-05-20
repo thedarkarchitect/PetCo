@@ -6,8 +6,8 @@ import { createJWTtoken } from "../utils/token-handler.js";
 const prisma = new PrismaClient();
 
 const createUser = async (req, res) => {
+	const { email } = req.body;
 	try {
-		const { email } = req.body;
 
 		const user = await prisma.user.findUnique({
 			//find the user to test if they exist before you re-add
@@ -44,6 +44,7 @@ const createUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
+
 	try {
 		const { email, password } = req.body;
 
@@ -85,8 +86,9 @@ const getUsers = async (req, res) => {
 };
 
 const getUserById = async (req, res) => {
+	const { id } = req.params
+
 	try {
-		const { id } = req.params
 
 		const user = await prisma.user.findUnique({
 			where: {
@@ -109,8 +111,8 @@ const getUserById = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+	const { id } = req.params
 	try {
-		const { id } = req.params
 
         const { password } = req.body
         //the password if updated must be rehased
@@ -142,15 +144,15 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+	const { id } = req.params
 	try {
-		const { id } = req.params
 		const userDeleted = await prisma.user.delete({
 			where: {
 				id: +id,
 			},
 		});
 
-		if(userDeleted){
+		if(!userDeleted){
 			res.status(StatusCodes.NOT_FOUND)
 		}
 
@@ -162,5 +164,6 @@ const deleteUser = async (req, res) => {
 		res.status(StatusCodes.BAD_REQUEST).json({ message: "User not deleted." });
 	}
 };
+
 
 export { createUser, loginUser, getUsers, getUserById, updateUser, deleteUser };

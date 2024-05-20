@@ -47,8 +47,8 @@ const getPosts = async (req, res) => {
 };
 
 const getPostById = async (req, res) => {
+	const { id } = req.params;
 	try {
-		const { id } = req.params;
 
 		const post = await prisma.post.findUnique({
 			where: {
@@ -64,6 +64,10 @@ const getPostById = async (req, res) => {
 				message: "Post got Successfully",
 				post,
 			});
+		} else {
+			res.status(StatusCodes.NOT_FOUND).json({
+				message: "Post id doesn't exist",
+			});
 		}
 	} catch (error) {
 		await prisma.$disconnect();
@@ -74,8 +78,8 @@ const getPostById = async (req, res) => {
 };
 
 const updatePost = async (req, res) => {
+	const { id } = req.params;
 	try {
-		const { id } = req.params;
 
 		const postUpdate = await prisma.post.update({
 			where: {
@@ -100,9 +104,9 @@ const updatePost = async (req, res) => {
 };
 
 const deletePost = async (req, res) => {
+	const { id } = req.params;
+	
 	try {
-		const { id } = req.params;
-
 		const postToDelete = await prisma.post.delete({
 			where: {
 				id: parseInt(id),
@@ -117,7 +121,7 @@ const deletePost = async (req, res) => {
 			.json({ message: "Post deleted Successfully", post: postToDelete });
 	} catch (error) {
 		await prisma.$disconnect();
-		res.status(StatusCodes.BAD_REQUEST).json({ message: "Post not deleted." });
+		res.status(StatusCodes.BAD_REQUEST).json({ message: "Post not deleted.", error });
 	}
 };
 
