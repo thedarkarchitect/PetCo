@@ -21,22 +21,6 @@ describe("Register user", () => {
 		expect(result.body.message).toBe("User has been registered successfully");
 	});
 
-	// it("route should return 400", async () => {
-	//  const result = await request(app)
-	//      .post("/api/auth/signup")
-	//      .send({
-	//          firstName: "Vel",
-	//             lastName: "javascript",
-	//          username: "vjavascript",
-	//          email: "velm@gmail.com",
-	//          password: "12345",
-	//             role: "ADMIN",
-	//      });
-
-	//  expect(result.status).toBe(StatusCodes.BAD_REQUEST);
-	//  expect(result.body.message).toBe("User not added!");
-	// });
-
 	it("route should return 502 ", async () => {
 		const result = await request(app).post("/api/auth/signUp").send({
 			firstName: "Velma",
