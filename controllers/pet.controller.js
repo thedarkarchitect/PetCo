@@ -4,19 +4,18 @@ import { StatusCodes } from "http-status-codes";
 const prisma = new PrismaClient();
 
 const createPet = async (req, res) => {
+	const { ownerId } = req.body;
 	try {
-		const { ownerId } = req.body;
 		const pet = await prisma.pet.create({
 			data: {
 				...req.body,
-				ownerId: +ownerId
-                // owner: { connect : { id: +ownerId } }
+				ownerId: +ownerId,
 			},
 		});
 
 		res
 			.status(StatusCodes.CREATED)
-			.json({ message: "Pett created Successfully", pet });
+			.json({ message: "Pet created Successfully", pet });
 	} catch (error) {
 		res
 			.status(StatusCodes.BAD_REQUEST)
@@ -28,10 +27,12 @@ const getPets = async (req, res) => {
 	try {
 		const allPets = await prisma.pet.findMany({
 			include: {
-				owner: true
-			}
+				owner: true,
+			},
 		});
-		res.status(StatusCodes.OK).json({ message: "All Pets of Owner", Pets: allPets });
+		res
+			.status(StatusCodes.OK)
+			.json({ message: "All Pets of Owner", Pets: allPets });
 	} catch (error) {
 		res
 			.status(StatusCodes.BAD_REQUEST)
@@ -40,17 +41,35 @@ const getPets = async (req, res) => {
 };
 
 const getOwnerPets = async (req, res) => {
+	const { ownerId } = req.params;
 	try {
-        const { ownerId } = req.params;
-		const allPets = await prisma.pet.findMany({
-			where:{
-                ownerId: +ownerId
-            },
-			include: {
-				owner: true
+		const owner = await prisma.user.findUnique({
+			where: {
+				id: +ownerId
 			}
 		});
-		res.status(StatusCodes.OK).json({ message: "All Pets of Owner", Pets: allPets });
+
+		if(owner) {
+			const allPets = await prisma.pet.findMany({
+				where: {
+					ownerId: +ownerId,
+				},
+				include: {
+					owner: true,
+				},
+			});
+	
+			if(allPets){
+				res
+					.status(StatusCodes.OK)
+					.json({ message: "All Pets of Owner", Pets: allPets });
+			}
+		}else{
+			res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: "Owner not Found"})
+		}
+
 	} catch (error) {
 		res
 			.status(StatusCodes.BAD_REQUEST)
@@ -59,19 +78,23 @@ const getOwnerPets = async (req, res) => {
 };
 
 const getPetById = async (req, res) => {
+	const { petId } = req.params;
+	console.log(petId)
 	try {
-		const { petId } = req.params
-
 		const pet = await prisma.pet.findUnique({
 			where: {
 				id: +petId,
-			}
+			},
 		});
 
 		if (pet) {
 			res.status(StatusCodes.OK).json({
 				message: "Pet got Successfully",
 				pet,
+			});
+		} else {
+			res.status(StatusCodes.NOT_FOUND).json({
+				message: "Pet not found"
 			});
 		}
 	} catch (error) {
@@ -83,24 +106,21 @@ const getPetById = async (req, res) => {
 };
 
 const updatePet = async (req, res) => {
+	const { petId } = req.params;
+	console.log(petId);
 	try {
-		const { petId } = req.params;
-		const { ownerId } = req.body
-		
 		const PetUpdate = await prisma.pet.update({
 			where: {
 				id: +petId,
 			},
 			data: {
 				...req.body,
-				ownerId: +ownerId,
 			},
 		});
-
-			res
-				.status(StatusCodes.OK)
-				.json({ message: "Pet updated Successfully", pet: PetUpdate });
 		
+		res
+			.status(StatusCodes.OK)
+			.json({ message: "Pet updated Successfully", pet: PetUpdate });
 	} catch (error) {
 		await prisma.$disconnect();
 		res
@@ -110,9 +130,9 @@ const updatePet = async (req, res) => {
 };
 
 const deletePet = async (req, res) => {
-	try {
-		const { petId } = req.params
+	const { petId } = req.params;
 
+	try {
 		const PetToDelete = await prisma.pet.delete({
 			where: {
 				id: parseInt(petId),
