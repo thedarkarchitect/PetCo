@@ -1,15 +1,17 @@
 import { Router } from "express";
-import { createAppointment, deleteAppointment, getAppointmentById, getAppointments, updateAppointment } from "../controllers/appointment.controller.js";
+import { createAppointment, deleteAppointment, getAppointmentById, getAppointments, getUserAppointments, updateAppointment } from "../controllers/appointment.controller.js";
+import { verifyToken } from "../utils/token-handler.js";
+import { isAdmin, isUser } from "../utils/middleware.js";
 
 const appointmentRouter = new Router()
 
-appointmentRouter.get("/:ownerId", getAppointments);
-appointmentRouter.get("/", getAppointments);
-appointmentRouter.get("/:id", getAppointmentById);
+appointmentRouter.get("/user-appointments/:ownerId", [verifyToken, isUser], getUserAppointments);
+appointmentRouter.get("/", [verifyToken, isAdmin], getAppointments);
+appointmentRouter.get("/get-appointment/:id", [verifyToken, isAdmin], getAppointmentById);
 
-appointmentRouter.post("/createAppointment", createAppointment);
+appointmentRouter.post("/createAppointment", [verifyToken, isUser], createAppointment);
 
-appointmentRouter.patch("/:id", updateAppointment);
-appointmentRouter.delete("/:id", deleteAppointment);
+appointmentRouter.patch("/update-appointment/:id", updateAppointment);
+appointmentRouter.delete("/delete-appointment/:id", [verifyToken, isAdmin], deleteAppointment);
 
 export default appointmentRouter;

@@ -9,7 +9,7 @@ let userToken;
 
 test("get the Admin token", async () => {
 	const response = await request(app)
-		.post("/api/auth/login")
+		.post("/api/v1/auth/login")
 		.send({ email: "rose@gmail.com", password: "1234" });
 
 	expect(response.status).toBe(StatusCodes.OK);
@@ -20,7 +20,7 @@ test("get the Admin token", async () => {
 
 test("get the User token", async () => {
 	const response = await request(app)
-		.post("/api/auth/login")
+		.post("/api/v1/auth/login")
 		.send({ email: "aba@gmail.com", password: "1234" });
 
 	expect(response.status).toBe(StatusCodes.OK);
@@ -32,14 +32,14 @@ test("get the User token", async () => {
 describe("Get all the pets in the db", () => {
 	it("no pets returned", async () => {
 		const response = await request(app)
-            .get("/api/pet/");
+            .get("/api/v1/pet/");
 
 		expect(response.status).toBe(StatusCodes.BAD_REQUEST);
 	});
 
 	it("return all the pets", async () => {
 		const response = await request(app)
-			.get("/api/pet/")
+			.get("/api/v1/pet/")
 			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
@@ -50,7 +50,7 @@ describe("Get all the pets in the db", () => {
 describe("test the creation of a pet", () =>{
     it("create a pet", async () => {
         const response = await request(app)
-            .post("/api/pet/create-pet")
+            .post("/api/v1/pet/create-pet")
             .send({
                 name: "George",
                 type: "DOG",
@@ -69,7 +69,7 @@ describe("test the creation of a pet", () =>{
 describe("get a pet by id", () => {
     it("give an id that doesn't exists", async () => {
         const response = await request(app)
-            .get("/api/pet/get-pet/6565")
+            .get("/api/v1/pet/get-pet/6565")
             .set("Authorization", `Bearer ${adminToken}`);
         
         expect(response.status).toBe(StatusCodes.NOT_FOUND);
@@ -78,7 +78,7 @@ describe("get a pet by id", () => {
     it("give an id that exists", async () => {
         const pet = await prisma.pet.findFirst();
         const response = await request(app)
-            .get(`/api/pet/get-pet/${pet.id}`)
+            .get(`/api/v1/pet/get-pet/${pet.id}`)
             .set("Authorization", `Bearer ${adminToken}`);
         
         expect(response.status).toBe(StatusCodes.OK)
@@ -89,7 +89,7 @@ describe("get a pet by id", () => {
 describe("get a pet by ownerid", () => {
     it("given an id that doesn't exists", async () => {
         const response = await request(app)
-            .get("/api/pet/get-owner-pet/6565")
+            .get("/api/v1/pet/get-owner-pet/6565")
             .set("Authorization", `Bearer ${adminToken}`);
         
         expect(response.status).toBe(StatusCodes.NOT_FOUND);
@@ -98,7 +98,7 @@ describe("get a pet by ownerid", () => {
 
     it("given an id that exists", async () => {
         const response = await request(app)
-            .get("/api/pet/get-owner-pet/3")
+            .get("/api/v1/pet/get-owner-pet/3")
             .set("Authorization", `Bearer ${adminToken}`);
         
         expect(response.body.message).toBe("no pets for owner");
@@ -108,7 +108,7 @@ describe("get a pet by ownerid", () => {
         const owner = await prisma.user.findFirst();
 
         const response = await request(app)
-            .get(`/api/pet/get-owner-pet/${owner.id}`)
+            .get(`/api/v1/pet/get-owner-pet/${owner.id}`)
             .set("Authorization", `Bearer ${adminToken}`);
         
         expect(response.status).toBe(StatusCodes.OK)
@@ -119,7 +119,7 @@ describe("get a pet by ownerid", () => {
 describe("testing update route of pet", () => {
     it("wrong id update", async () => {
         const response = await request(app)
-            .patch("/api/pet/update-pet/8686")
+            .patch("/api/v1/pet/update-pet/8686")
             .set("Authorization", `Bearer ${adminToken}`)
         
         expect(response.status).toBe(StatusCodes.BAD_REQUEST)
@@ -134,7 +134,7 @@ describe("testing update route of pet", () => {
         });
 
         const response = await request(app)
-            .patch(`/api/pet/update-pet/${pet.id}`)
+            .patch(`/api/v1/pet/update-pet/${pet.id}`)
             .send({name: "Rexon"})
             .set("Authorization",  `Bearer ${adminToken}`);
         
@@ -147,7 +147,7 @@ describe("testing update route of pet", () => {
 describe("delete a post by id", () => {
     it("failed to delete a post", async () => {
         const response = await request(app)
-            .delete("/api/pet/delete-pet/5465")
+            .delete("/api/v1/pet/delete-pet/5465")
             .set("Authorization", `Bearer ${adminToken}`)
 
         expect(response.status).toBe(StatusCodes.BAD_REQUEST)
@@ -161,7 +161,7 @@ describe("delete a post by id", () => {
             }
         })
         const response = await request(app)
-            .delete(`/api/pet/delete-pet/${pet.id}`)
+            .delete(`/api/v1/pet/delete-pet/${pet.id}`)
             .set("Authorization", `Bearer ${adminToken}`);
         
         expect(response.status).toBe(StatusCodes.OK);

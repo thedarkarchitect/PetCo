@@ -27,14 +27,14 @@ app.use(
 );
 app.use(express.urlencoded({limit: "25mb", extended: true}))
 
-app.use("/api/auth", userRouter); // done secured
-app.use("/api/posts", postRouter); // done
-app.use("/api/comments", commentRouter); // done
-app.use("/api/products", productRouter); //done
-app.use("/api/orders", orderRouter);
-app.use("/api/wishlist", wishlistRouter);
-app.use("/api/address", addressRouter); //done
-app.use("/api/pet", petRouter);
-app.use("/api/appointments", appointmentRouter)
+app.use("/api/v1/auth", userRouter); // done secured
+app.use("/api/v1/posts", postRouter); // done
+app.use("/api/v1/comments", commentRouter); //done
+app.use("/api/v1/products", productRouter); 
+app.use("/api/v1/orders", orderRouter);
+app.use("/api/v1/wishlist", wishlistRouter); //done
+app.use("/api/v1/address", addressRouter); //done
+app.use("/api/v1/pet", petRouter);//done
+app.use("/api/v1/appointments", appointmentRouter)// done
 
 export default app;

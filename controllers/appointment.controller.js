@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 const createAppointment = async (req, res) => {
 	try {
         const { petId, ownerId } = req.body
-		console.log(req.body)
 		const appointment = await prisma.appointment.create({
 			data: {
 				petId: +petId,
@@ -27,19 +26,24 @@ const createAppointment = async (req, res) => {
 
 //get all appointment for a user
 const getUserAppointments = async (req, res) => {
+	const { ownerId } = req.params;
 	try {
-        const { ownerId } = req.body.params;
+
+
 		const allappointments = await prisma.appointment.findMany({
 			where: {
                 ownerId: +ownerId
             },
-            include: { pet: true }
+            include: { 
+				pet: true 
+			}
 		});
+
 		res.status(StatusCodes.OK).json({ message: "All appointments", appointments: allappointments });
 	} catch (error) {
 		res
 			.status(StatusCodes.BAD_REQUEST)
-			.json({ message: "Can't get Users", error });
+			.json({ message: "Can't get User's appointment", error });
 	}
 };
 
@@ -59,9 +63,9 @@ const getAppointments = async (req, res) => {
 
 //get an appointment by it's id
 const getAppointmentById = async (req, res) => {
+	const { id } = req.params
 	try {
-		const { id } = req.params
-
+		
 		const appointment = await prisma.appointment.findUnique({
 			where: {
 				id: +id,
@@ -75,6 +79,10 @@ const getAppointmentById = async (req, res) => {
 			res.status(StatusCodes.OK).json({
 				message: "appointment got Successfully",
 				appointment,
+			});
+		} else {
+			res.status(StatusCodes.NOT_FOUND).json({
+				message: "appointment doesn't exist"
 			});
 		}
 	} catch (error) {

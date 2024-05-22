@@ -11,7 +11,7 @@ let adminToken;
 
 describe("Register user", () => {
     it("route should return 201", async () => {
-        const result = await request(app).post("/api/auth/signUp").send({
+        const result = await request(app).post("/api/v1/auth/signUp").send({
             firstName: "Velma",
             lastName: "javascript",
             username: "vjavascript",
@@ -24,7 +24,7 @@ describe("Register user", () => {
     });
 
     it("route should return 502 ", async () => {
-        const result = await request(app).post("/api/auth/signUp").send({
+        const result = await request(app).post("/api/v1/auth/signUp").send({
             firstName: "Velma",
             lastName: "javascript",
             username: "vjavascript",
@@ -41,7 +41,7 @@ describe("Register user", () => {
 
 describe("User Login", () => {
     it("empty field", async () => {
-        const response = await request(app).post("/api/auth/login").send({});
+        const response = await request(app).post("/api/v1/auth/login").send({});
 
 
         expect(response.status).toBe(StatusCodes.NOT_FOUND);
@@ -50,7 +50,7 @@ describe("User Login", () => {
 
     it("should return token and 200", async () => {
         const response = await request(app)
-            .post("/api/auth/login")
+            .post("/api/v1/auth/login")
             .send({ email: "rose@gmail.com", password: "1234" });
 
         expect(response.status).toBe(StatusCodes.OK);
@@ -62,7 +62,7 @@ describe("User Login", () => {
 
     it("should return token and 200", async () => {
         const response = await request(app)
-            .post("/api/auth/login")
+            .post("/api/v1/auth/login")
             .send({ email: "aba@gmail.com", password: "1234" });
 
         expect(response.status).toBe(StatusCodes.OK);
@@ -75,7 +75,7 @@ describe("User Login", () => {
 describe("Delete user", () => {
     it("Fail to delete user by id", async () => {
         const response = await request(app)
-            .delete("/api/auth/323")
+            .delete("/api/v1/auth/323")
             .set("Authorization", `Bearer ${adminToken}`);
 
 
@@ -92,7 +92,7 @@ describe("Delete user", () => {
 
 
         const response = await request(app)
-            .delete(`/api/auth/${user.id}`)
+            .delete(`/api/v1/auth/${user.id}`)
             .set("Authorization", `Bearer ${adminToken}`);
 
 

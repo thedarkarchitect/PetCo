@@ -29,7 +29,12 @@ const getUserWishlist = async (req, res) => {
             include: { products: true }
         });
 
-        res.status(StatusCodes.OK).json({ message: "Fetch User Wishlist", wishList: userWishlistItems });
+        if(userWishlistItems.length === 0) {
+            res.json({ message: "No wishlist items", wishList: [] })
+        } else {
+            res.status(StatusCodes.OK).json({ message: "Fetch User Wishlist", wishList: userWishlistItems });
+        }
+
     } catch(error) {
         await prisma.$disconnect();
         res.status(StatusCodes.BAD_REQUEST).json({ message: "Can't get products in a wishlist", error })
@@ -47,7 +52,7 @@ const deleteWishlistItem = async (req, res) => {
         res.status(StatusCodes.OK).json({ message: "Wishlist item deleted", wishlist: deletedWishlistItem });
     } catch(error) {
         await prisma.$disconnect();
-        res.status(StatusCodes.BAD_REQUEST).json({ message: "Failed to delete Wishlist" })
+        res.status(StatusCodes.BAD_REQUEST).json({ message: "Failed to delete Wishlist item" })
     }
 }
 
@@ -55,11 +60,25 @@ const deleteWishlist = async (req, res) => {
     try {
         const { userId } = req.params;
 
-        const deletedWishlist = await prisma.wishList.deleteMany({
-            where: { userId: +userId }
-        });
+        const user = await prisma.user.findUnique({
+            where: {
+                id: +userId
+            }
+        })
 
-        res.status(StatusCodes.OK).json({ message: "Wishlist deleted", wishlist: deletedWishlist });
+        if(user) {
+            const deletedWishlist = await prisma.wishList.deleteMany({
+                where: { userId: +userId }
+            });
+    
+            res.status(StatusCodes.OK).json({ message: "Wishlist deleted", wishlist: deletedWishlist });
+        } else {
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: "WishList does not exist"
+            })
+        }
+
+        
     } catch(error) {
         await prisma.$disconnect();
         res.status(StatusCodes.BAD_REQUEST).json({ message: "Failed to delete Wishlist" })
