@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { addToWishList, deleteWishlist, deleteWishlistItem, getUserWishlist } from "../controllers/wishList.controller.js";
-import { isUser, isAdmin } from "../utils/middleware.js";
-import { verifyToken } from "../utils/token-handler.js";
+
 
 const wishlistRouter = new Router();
 

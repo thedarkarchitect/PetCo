@@ -35,4 +35,4 @@ app.use("/api/v1/address", addressRouter); //done
 app.use("/api/v1/pet", petRouter);//done
 app.use("/api/v1/appointments", appointmentRouter)// done
 
-export default app;
+export { app };
