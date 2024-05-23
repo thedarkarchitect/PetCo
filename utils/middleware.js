@@ -9,7 +9,7 @@ const isAdmin = (req, res, next) => {
 };
 
 const isUser = (req, res, next) => {
-	if (req.tokenData.role === "ADMIN") {
+	if (req.tokenData.role === "USER") {
 		next();
 	} else {
 		res.status(StatusCodes.FORBIDDEN).json({ error: "Access Denied" });

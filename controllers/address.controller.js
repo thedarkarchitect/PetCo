@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 
 const createAddress = async (req, res) => {
 	try {
-        console.log(req.body)
+		// console.log(req.body)
 		const newAddresss = await prisma.address.create({
 			data: {
-                ...req.body,
+				...req.body,
 			},
 		});
 		res
@@ -25,12 +25,30 @@ const createAddress = async (req, res) => {
 const getUserAddresses = async (req, res) => {
 	try {
 		const { userId } = req.params;
-		const userAddresses = await prisma.address.findMany({
-			where: { userId: +userId },
+
+		const user = await prisma.user.findUnique({
+			where: {
+				id: +userId,
+			},
 		});
-		res
-			.status(StatusCodes.OK)
-			.json({ message: "Fetched a user address", userAddresses });
+
+		if (user) {
+			const userAddresses = await prisma.address.findMany({
+				where: { userId: +userId },
+			});
+
+			if (userAddresses.length === 0) {
+				res.status(StatusCodes.OK).json({ message: "User has no address" });
+			} else {
+				res
+					.status(StatusCodes.OK)
+					.json({ message: "Fetched a user address", userAddresses });
+			}
+		} else {
+			res
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: "user with id doesn't exist" });
+		}
 	} catch (error) {
 		await prisma.$disconnect();
 		res
@@ -48,14 +66,22 @@ const updateAddress = async (req, res) => {
 				...req.body,
 			},
 		});
-		res
+		
+		if(updateAddress){
+			res
 			.status(StatusCodes.CREATED)
 			.json({ message: "Address updated", address: updatedAddress });
+		} else {
+			res	
+				.status(StatusCodes.NOT_FOUND)
+				.json({ message: "Address not found" })
+		}
+		
 	} catch (error) {
 		await prisma.$disconnect();
 		res
 			.status(StatusCodes.BAD_REQUEST)
-			.json({ message: "Failed to update user addresses", error });
+			.json({ message: "Failed to update user addresses/ address not found", error });
 	}
 };
 
@@ -65,15 +91,16 @@ const deleteAddress = async (req, res) => {
 		const deletedAddress = await prisma.address.delete({
 			where: { id: +addressId },
 		});
-		res
-			.status(StatusCodes.OK)
-			.json({
-				message: "Address deleted successfully",
-				address: deletedAddress,
-			});
+
+		res.status(StatusCodes.OK).json({
+			message: "Address deleted successfully",
+			address: deletedAddress,
+		});
 	} catch (error) {
 		await prisma.$disconnect();
-		res.status(500).json({ message: "Failed to delete address", error });
+		res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "Failed to delete address", error });
 	}
 };
 

@@ -22,14 +22,33 @@ const createComment = async (req, res) => {
 };
 
 const getAllCommentsForPost = async (req, res) => {
+	const { postId } = req.params;
 	try {
-		const { postId } = req.params
-		const allComments = await prisma.comment.findMany({
-			where: {
-				postId: +postId
+		const post = await prisma.post.findUnique({
+			where:{
+				id: +postId
 			}
-		});
-		res.status(StatusCodes.OK).json({ message: "All Comments", posts: allComments });
+		})
+
+		if(post){
+			const allComments = await prisma.comment.findMany({
+				where: {
+					postId: +postId,
+				},
+			});
+	
+			if (allComments.length === 0) {
+				res.json({ message: "Post has no comments" });
+			}
+			{
+				res
+					.status(StatusCodes.OK)
+					.json({ message: "All Post Comments", comment: allComments });
+			}
+		} else {
+			res.status(StatusCodes.NOT_FOUND).json({ message: "Post doesnt exist" })
+		}
+		
 	} catch (error) {
 		res
 			.status(StatusCodes.BAD_REQUEST)
@@ -37,10 +56,9 @@ const getAllCommentsForPost = async (req, res) => {
 	}
 };
 
-
 const deleteComment = async (req, res) => {
 	try {
-		const { id } = req.params
+		const { id } = req.params;
 		const commentToDelete = await prisma.comment.delete({
 			where: {
 				id: +id,
@@ -52,8 +70,10 @@ const deleteComment = async (req, res) => {
 			.json({ message: "Post deleted Successfully", comment: commentToDelete });
 	} catch (error) {
 		await prisma.$disconnect();
-		res.status(StatusCodes.BAD_REQUEST).json({ message: "Comment not deleted." });
+		res
+			.status(StatusCodes.BAD_REQUEST)
+			.json({ message: "Comment not deleted." });
 	}
 };
 
-export { createComment ,  getAllCommentsForPost, deleteComment};
+export { createComment, getAllCommentsForPost, deleteComment };

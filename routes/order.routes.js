@@ -6,8 +6,11 @@ const orderRouter = new Router();
 orderRouter.post("/createOrder", createOrder);
 
 orderRouter.get("/get-users-order/:userId", getUserOrders);
+
 orderRouter.get("/get-order/:orderId", getOrderById);
+
 orderRouter.patch("/:orderId", updateOrder)
+
 orderRouter.delete("/:orderId", deleteOrder);
 
 
