@@ -34,7 +34,7 @@ jobs:
               run: npm ci
 
             - name: Run migration files against DB
-              run: npx prisma migrate dev
+              run: npx prisma migrate deploy
 
             - name: run the integration tests
               run: npm test
