@@ -123,9 +123,10 @@ const updatePet = async (req, res) => {
 			},
 		});
 
-		res
-			.status(StatusCodes.OK)
-			.json({ message: "Pet updated Successfully", pet: PetUpdate });
+			res
+				.status(StatusCodes.OK)
+				.json({ message: "Pet updated Successfully", pet: PetUpdate });
+		
 	} catch (error) {
 		await prisma.$disconnect();
 		res
