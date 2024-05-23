@@ -50,7 +50,7 @@ jobs:
                 PGPASSWORD: cheese66cakes
 
             - name: Run migration files against DB
-              run: npx prisma migrate deploy
+              run: npx prisma migrate dev
 
             - name: run the integration tests
               run: npm test
