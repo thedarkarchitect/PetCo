@@ -7,11 +7,13 @@ import { isAdmin, isUser } from "../utils/middleware.js";
 const postRouter = Router();
 
 postRouter.get("/", verifyToken, getPosts);
+
 postRouter.get("/:id", verifyToken, getPostById);
 
 postRouter.post("/createPost", [verifyToken, isUser], createPost);
 
 postRouter.patch("/:id", [verifyToken, isAdmin], updatePost);
+
 postRouter.delete("/:id", [verifyToken, isAdmin], deletePost);
 
 export default postRouter;
