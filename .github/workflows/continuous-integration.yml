@@ -5,7 +5,7 @@ on:
         branches: [main]
 
 env:
-    DATABASE_URL: postgresql://postgres:cheese66cakes@localhost:3030/PetCo?schema=public
+    DATABASE_URL: postgresql://postgres:cheese66cakes@localhost:5432/PetCo?schema=public
     JWT_SECRET_ACCESS: c3631916090d54d31d4dd4d7a6ea7c025b2b28368b160a859f6e3468fb1bd688ed64c26505ef35a
 
 jobs:
