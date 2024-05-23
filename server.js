@@ -13,8 +13,6 @@ import appointmentRouter from "./routes/appointment.routes.js";
 
 const app = express();
 
-
-
 //middleware
 app.use(express.json({limit: "25mb"}));
 app.use(morgan("dev"));
