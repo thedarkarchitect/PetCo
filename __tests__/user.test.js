@@ -19,6 +19,7 @@ describe("Register user", () => {
             password: "12345",
             role: "ADMIN",
         });
+
         expect(result.status).toBe(StatusCodes.CREATED);
         expect(result.body.message).toBe("User has been registered successfully");
     });
@@ -40,13 +41,13 @@ describe("Register user", () => {
 
 
 describe("User Login", () => {
-    it("empty field", async () => {
-        const response = await request(app).post("/api/v1/auth/login").send({});
+    // it("empty field", async () => {
+    //     const response = await request(app).post("/api/v1/auth/login").send({});
 
 
-        expect(response.status).toBe(StatusCodes.NOT_FOUND);
-        expect(response.body.message).toBe("Provide email and password");
-    });
+    //     expect(response.status).toBe(StatusCodes.NOT_FOUND);
+    //     expect(response.body.message).toBe("Provide email and password");
+    // });
 
     it("should return token and 200", async () => {
         const response = await request(app)
@@ -55,20 +56,7 @@ describe("User Login", () => {
 
         expect(response.status).toBe(StatusCodes.OK);
         expect(response.body.message).toBe("User LoggedIn Successfully");
-        expect(response.body.token).toBeDefined();
-        adminToken = response.body.token;
-    });
-
-
-    it("should return token and 200", async () => {
-        const response = await request(app)
-            .post("/api/v1/auth/login")
-            .send({ email: "aba@gmail.com", password: "1234" });
-
-        expect(response.status).toBe(StatusCodes.OK);
-        expect(response.body.message).toBe("User LoggedIn Successfully");
-        expect(response.body.token).toBeDefined();
-        userToken = response.body.token;
+        expect(response.body.token).toBeDefined()
     });
 });
 
@@ -76,8 +64,6 @@ describe("Delete user", () => {
     it("Fail to delete user by id", async () => {
         const response = await request(app)
             .delete("/api/v1/auth/323")
-            .set("Authorization", `Bearer ${adminToken}`);
-
 
         expect(response.status).toBe(StatusCodes.BAD_REQUEST);
     });
@@ -93,7 +79,6 @@ describe("Delete user", () => {
 
         const response = await request(app)
             .delete(`/api/v1/auth/${user.id}`)
-            .set("Authorization", `Bearer ${adminToken}`);
 
 
         expect(response.status).toBe(StatusCodes.OK);

@@ -1,19 +1,17 @@
 import { Router } from "express";
 import { createPost, deletePost, getPostById, getPosts, updatePost } from "../controllers/post.controller.js";
-// import { postSchema, validate } from "../utils/data-validator.js";
-import { verifyToken } from "../utils/token-handler.js";
-import { isAdmin, isUser } from "../utils/middleware.js";
+
 
 const postRouter = Router();
 
-postRouter.get("/", verifyToken, getPosts);
+postRouter.get("/", getPosts);
 
-postRouter.get("/:id", verifyToken, getPostById);
+postRouter.get("/:id", getPostById);
 
-postRouter.post("/createPost", [verifyToken, isUser], createPost);
+postRouter.post("/createPost", createPost);
 
-postRouter.patch("/:id", [verifyToken, isAdmin], updatePost);
+postRouter.patch("/:id", updatePost);
 
-postRouter.delete("/:id", [verifyToken, isAdmin], deletePost);
+postRouter.delete("/:id", deletePost);
 
 export default postRouter;

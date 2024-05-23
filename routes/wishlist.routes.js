@@ -5,12 +5,12 @@ import { verifyToken } from "../utils/token-handler.js";
 
 const wishlistRouter = new Router();
 
-wishlistRouter.post("/add-to-wishList/", [verifyToken, isUser], addToWishList);
+wishlistRouter.post("/add-to-wishList/", addToWishList);
 
-wishlistRouter.get("/get-user-wishlist/:userId", verifyToken, getUserWishlist); //
+wishlistRouter.get("/get-user-wishlist/:userId", getUserWishlist); //
 
-wishlistRouter.delete("/delete-user-wishlist/:userId", verifyToken, deleteWishlist);//
+wishlistRouter.delete("/delete-user-wishlist/:userId", deleteWishlist);//
 
-wishlistRouter.delete("/delete-wishlist-item/:wishListId", [verifyToken, isUser], deleteWishlistItem);
+wishlistRouter.delete("/delete-wishlist-item/:wishListId", deleteWishlistItem);
 
 export default wishlistRouter;

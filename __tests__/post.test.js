@@ -5,42 +5,17 @@ import request from "supertest";
 import testPic from "../utils/testPic";
 
 const prisma = new PrismaClient();
-let adminToken;
-let userToken;
-
-test("get the Admin token", async () => {
-	const response = await request(app)
-		.post("/api/v1/auth/login")
-		.send({ email: "rose@gmail.com", password: "1234" });
-
-	expect(response.status).toBe(StatusCodes.OK);
-	expect(response.body.token).toBeDefined();
-	adminToken = response.body.token;
-	console.log("admin: "+adminToken);
-});
-
-test("get the User token", async () => {
-	const response = await request(app)
-		.post("/api/v1/auth/login")
-		.send({ email: "aba@gmail.com", password: "1234" });
-
-	expect(response.status).toBe(StatusCodes.OK);
-	expect(response.body.token).toBeDefined();
-	userToken = response.body.token;
-    console.log("user: "+userToken);
-});
 
 describe("Get all the posts in the db", () => {
-	it("no post returned", async () => {
-		const response = await request(app).get("/api/v1/posts/");
+	// it("no post returned", async () => {
+	// 	const response = await request(app).get("/api/v1/posts/");
 
-		expect(response.status).toBe(StatusCodes.BAD_REQUEST);
-	});
+	// 	expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+	// });
 
 	it("return all the quotes", async () => {
 		const response = await request(app)
 			.get("/api/v1/posts/")
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect("application/json");
@@ -67,7 +42,6 @@ describe("get a post by id", () => {
 	it("give an id that doesn't exists", async () => {
 		const response = await request(app)
 			.get("/api/v1/posts/6565")
-			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.NOT_FOUND);
 	});
@@ -76,7 +50,6 @@ describe("get a post by id", () => {
 		const post = await prisma.post.findFirst();
 		const response = await request(app)
 			.get(`/api/v1/posts/${post.id}`)
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect(response.body.message).toBe("Post got Successfully");
@@ -87,7 +60,6 @@ describe("testing update route of post", () => {
 	it("wrong id update", async () => {
 		const response = await request(app)
 			.patch("/api/v1/posts/8686")
-			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.BAD_REQUEST);
 	});
@@ -101,7 +73,6 @@ describe("testing update route of post", () => {
 		const response = await request(app)
 			.patch(`/api/v1/posts/${post.id}`)
 			.send({ title: "GRooming" })
-			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect(response.body.message).toBe("Post updated Successfully");

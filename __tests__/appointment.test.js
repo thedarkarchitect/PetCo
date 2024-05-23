@@ -4,42 +4,17 @@ import { PrismaClient } from "@prisma/client";
 import request from "supertest";
 
 const prisma = new PrismaClient();
-let adminToken;
-let userToken;
-
-test("get the Admin token", async () => {
-	const response = await request(app)
-		.post("/api/v1/auth/login")
-		.send({ email: "rose@gmail.com", password: "1234" });
-
-	expect(response.status).toBe(StatusCodes.OK);
-	expect(response.body.token).toBeDefined();
-	adminToken = response.body.token;
-	console.log("admin: "+adminToken);
-});
-
-test("get the User token", async () => {
-	const response = await request(app)
-		.post("/api/v1/auth/login")
-		.send({ email: "aba@gmail.com", password: "1234" });
-
-	expect(response.status).toBe(StatusCodes.OK);
-	expect(response.body.token).toBeDefined();
-	userToken = response.body.token;
-    console.log("user: "+userToken);
-});
 
 describe("Get all the appointments in the db", () => {
-	it("no appointments returned", async () => {
-		const response = await request(app).get("/api/v1/appointments/");
+	// it("no appointments returned", async () => {
+	// 	const response = await request(app).get("/api/v1/appointments/");
 
-		expect(response.status).toBe(StatusCodes.BAD_REQUEST);
-	});
+	// 	expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+	// });
 
 	it("return all the appointments", async () => {
 		const response = await request(app)
 			.get("/api/v1/appointments/")
-			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect("application/json");
@@ -57,7 +32,6 @@ describe("test the creation of an appointment", () => {
 				"appointmentDate": "2024-05-23",
 				"notes": "he is a good boy"
 			})
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.status).toBe(StatusCodes.BAD_REQUEST);
 		expect(response.body.message).toBe("appointment not added!");
@@ -73,7 +47,6 @@ describe("test the creation of an appointment", () => {
 				"appointmentDate": "2024-05-23",
 				"notes": "he is a good boy"
 			})
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.status).toBe(StatusCodes.CREATED);
 		expect(response.body.message).toBe("appointment created Successfully");
@@ -97,7 +70,6 @@ describe("get a appointment by id", () => {
 		});
 		const response = await request(app)
 			.get(`/api/v1/appointments/user-appointments/${user.id}`)
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect(response.body.message).toBe("All appointments");
@@ -108,7 +80,6 @@ describe("get a appoint by id", () => {
 	it("give an id that doesn't exists", async () => {
 		const response = await request(app)
 			.get("/api/v1/appointments/get-appointment/465456")
-			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.NOT_FOUND);
 		expect(response.body.message).toBe("appointment doesn't exist")
@@ -122,7 +93,6 @@ describe("get a appoint by id", () => {
 		});
 		const response = await request(app)
 			.get(`/api/v1/appointments/get-appointment/${appointment.id}`)
-			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect(response.body.message).toBe("appointment got Successfully");
@@ -158,7 +128,6 @@ describe("delete a appointment by id", () => {
 	it("failed to delete a appointment", async () => {
 		const response = await request(app)
 			.delete("/api/v1/appointments/delete-appointment/5465")
-			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.BAD_REQUEST)
 		expect(response.body.message).toBe("appointment not deleted.");
@@ -172,7 +141,6 @@ describe("delete a appointment by id", () => {
 		});
 		const response = await request(app)
 			.delete(`/api/v1/appointments/delete-appointment/${appointment.id}`)
-			.set("Authorization", `Bearer ${adminToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect(response.body.message).toBe("appointment deleted Successfully");

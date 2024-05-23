@@ -4,36 +4,11 @@ import { PrismaClient } from "@prisma/client";
 import request from "supertest";
 
 const prisma = new PrismaClient();
-let adminToken;
-let userToken;
-
-test("get the Admin token", async () => {
-	const response = await request(app)
-		.post("/api/v1/auth/login")
-		.send({ email: "rose@gmail.com", password: "1234" });
-
-	expect(response.status).toBe(StatusCodes.OK);
-	expect(response.body.token).toBeDefined();
-	adminToken = response.body.token;
-	console.log("admin: "+adminToken);
-});
-
-test("get the User token", async () => {
-	const response = await request(app)
-		.post("/api/v1/auth/login")
-		.send({ email: "aba@gmail.com", password: "1234" });
-
-	expect(response.status).toBe(StatusCodes.OK);
-	expect(response.body.token).toBeDefined();
-	userToken = response.body.token;
-    console.log("user: "+userToken);
-});
 
 describe("get a wishlist by user id", () => {
 	it("give an id that doesn't exists", async () => {
 		const response = await request(app)
 			.get("/api/v1/wishlist/get-user-wishlist/5545")
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.body.message).toBe("No wishlist items");
 	});
@@ -42,7 +17,6 @@ describe("get a wishlist by user id", () => {
 		const user = await prisma.user.findFirst();
 		const response = await request(app)
 			.get(`/api/v1/wishlist/get-user-wishlist/${user.id}`)
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect(response.body.message).toBe("Fetch User Wishlist");
@@ -58,7 +32,6 @@ describe("test the creation of a wishlist", () => {
 				userId: 2,
                 productId: 15
 			})
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.status).toBe(StatusCodes.CREATED);
 		expect(response.body.message).toBe("Product added to wishlist");
@@ -90,7 +63,6 @@ describe("delete wishlist by id", () => {
 	it("failed to delete a item", async () => {
 		const response = await request(app)
 			.delete("/api/v1/wishlist/delete-wishlist-item/5545")
-			.set("Authorization", `Bearer ${userToken}`);
 
 		expect(response.status).toBe(StatusCodes.BAD_REQUEST)
 		expect(response.body.message).toBe("Failed to delete Wishlist item");
@@ -104,7 +76,7 @@ describe("delete wishlist by id", () => {
         })
 		const response = await request(app)
 			.delete(`/api/v1/wishlist/delete-wishlist-item/${item.id}`)
-			.set("Authorization", `Bearer ${userToken}`);
+
 
 		expect(response.status).toBe(StatusCodes.OK);
 		expect(response.body.message).toBe("Wishlist item deleted");
