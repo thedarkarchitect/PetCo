@@ -19,7 +19,14 @@ jobs:
                     POSTGRES_USER: postgres
                     POSTGRES_PASSWORD: cheese66cakes
                     POSTGRES_DB: PetCo
-                    ports: -5432:5432
+                ports: 
+                  - 5432:5432
+                
+                options: >-
+                  --health-cmd="pg_isready -U postgres -d PetCo"
+                  --health-interval=10s
+                  --health-timeout=5s
+                  --health-retries=5
 
         steps:
             - name: Checkout code into the runner
@@ -33,8 +40,17 @@ jobs:
             - name: Install npm packages
               run: npm ci
 
+            - name: Wait for PostgreSQL to be ready
+              run: |
+                until pg_isready -h localhost -p 5432 -U postgres; do 
+                  echo "$(date) - waiting for database to be ready"
+                  sleep 5
+                done
+              env:
+                PGPASSWORD: cheese66cakes
+
             - name: Run migration files against DB
-              run: npx prisma migrate dev
+              run: npx prisma migrate deploy
 
             - name: run the integration tests
               run: npm test
