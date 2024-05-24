@@ -73,14 +73,14 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-		const { price, quantity} = req.body;
+		// const { price, quantity} = req.body;
         const updatedProduct = await prisma.product.update({
             where: {
                 id: +id
             },
             data: {
-				price: +price,
-				quantity: +quantity,
+				// price: +price,
+				// quantity: +quantity,
                 ...req.body
             }
         })

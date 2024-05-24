@@ -112,21 +112,22 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
 	const { id } = req.params
+	
 	try {
-
-        const { password } = req.body
-        //the password if updated must be rehased
-        const salt = await bcrypt.genSalt()
-        const hashed = await bcrypt.hash(password, salt)
-
-
+			let hashed;
+			//the password if updated must be rehased
+			if(req.body.password){
+				const salt = await bcrypt.genSalt();
+        		return hashed = await bcrypt.hash(req.body.password, salt);
+			} else {}
+        
 		const updatedUser = await prisma.user.update({
 			where: {
 				id: +id,
 			},
 			data: {
 				...req.body,
-                password: hashed
+				password: hashed
 			},
 		});
 
