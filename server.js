@@ -14,7 +14,7 @@ import appointmentRouter from "./routes/appointment.routes.js";
 const app = express();
 
 //middleware
-app.use(express.json({limit: "25mb"}));
+app.use(express.json({limit: "25mb"}));//limits the size of the base64 encoded image that comes in with the rest of the json data
 app.use(morgan("dev"));
 app.use(
 	cors({
