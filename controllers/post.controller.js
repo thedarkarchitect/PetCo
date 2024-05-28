@@ -37,6 +37,9 @@ const getPosts = async (req, res) => {
 			include: {
 				comment: true,
 			},
+			orderBy: {
+				id: "desc"
+			}
 		});
 		res.status(StatusCodes.OK).json({ message: "All Posts", posts: allPosts });
 	} catch (error) {
