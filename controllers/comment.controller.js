@@ -39,8 +39,7 @@ const getAllCommentsForPost = async (req, res) => {
 	
 			if (allComments.length === 0) {
 				res.json({ message: "Post has no comments" });
-			}
-			{
+			}else{
 				res
 					.status(StatusCodes.OK)
 					.json({ message: "All Post Comments", comment: allComments });
