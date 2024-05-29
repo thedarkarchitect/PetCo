@@ -64,7 +64,7 @@ const loginUser = async (req, res) => {
 			const accessToken = createJWTtoken(data);
 			res
 				.status(StatusCodes.OK)
-				.json({ message: "User LoggedIn Successfully", token: accessToken });
+				.json({ message: "User LoggedIn Successfully", user, token: accessToken });
 		}
 	} catch (error) {
 		await prisma.$disconnect();
