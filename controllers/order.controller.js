@@ -11,12 +11,16 @@ const createOrder = async (req, res) => {
 		// Create the order
 		const order = await prisma.order.create({
 			data: {
-				user: { connect: { id: +userId } },
-				products: products,
-				totalprice: +totalprice,
+				userId: +userId,
+				products: products || null,
+				totalprice: +totalprice || 0,
 				isComplete,
-				address: { connect: { id: +addressId } },
+				addressId: +addressId || null,
 			},
+			include: {
+				address: true,
+				user: true
+			}
 		});
 
 		res
