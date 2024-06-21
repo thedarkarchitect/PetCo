@@ -10,6 +10,7 @@ import wishlistRouter from "./routes/wishlist.routes.js";
 import addressRouter from "./routes/address.routes.js";
 import petRouter from "./routes/pet.routes.js";
 import appointmentRouter from "./routes/appointment.routes.js";
+import homeRouter from "./routes/home.routes.js";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(
 );
 app.use(express.urlencoded({limit: "25mb", extended: true}))
 
+app.use("/api/v1/", homeRouter);
 app.use("/api/v1/auth", userRouter); // done secured
 app.use("/api/v1/posts", postRouter); // done
 app.use("/api/v1/comments", commentRouter); //done
